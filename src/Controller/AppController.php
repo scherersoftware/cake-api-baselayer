@@ -4,7 +4,7 @@ namespace CakeApiBaselayer\Controller;
 
 use App\Controller\AppController as BaseController;
 use Cake\Core\Configure;
-use CkTools\Lib\ApiReturnCode;
+use CakeApiBaselayer\Lib\ApiReturnCode;
 
 class AppController extends BaseController
 {
@@ -17,7 +17,7 @@ class AppController extends BaseController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->loadComponent('CkTools.Api');
+        $this->loadComponent('CakeApiBaselayer.Api');
     }
 
     /**
