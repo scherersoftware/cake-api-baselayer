@@ -3,7 +3,9 @@ namespace CakeApiBaselayer\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Core\Configure;
 use Cake\Network\Response;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use CakeApiBaselayer\Lib\ApiReturnCode;
 
@@ -19,7 +21,8 @@ class ApiComponent extends Component
      * @var array
      */
     public $components = [
-        'RequestHandler'
+        'RequestHandler',
+        'Auth'
     ];
 
     /**
@@ -28,7 +31,11 @@ class ApiComponent extends Component
      * @var array
      */
     protected $_defaultConfig = [
-        'jsonEncodeOptions' => JSON_UNESCAPED_SLASHES
+        'jsonEncodeOptions' => JSON_UNESCAPED_SLASHES,
+        'header_name' => 'APITOKEN',
+        'repository' => 'Users',
+        'field' => 'api_token',
+        'allow_parallel_sessions' => true,
     ];
 
     /**
@@ -45,6 +52,14 @@ class ApiComponent extends Component
      */
     protected $_statusCodeMapping = [];
 
+
+    /**
+     * Table to be used
+     *
+     * @var array
+     */
+    protected $_table = null;
+
     /**
      * Constructor hook method.
      *
@@ -56,6 +71,7 @@ class ApiComponent extends Component
      */
     public function initialize(array $config)
     {
+        $this->_table = TableRegistry::get($this->config('repository'));
         $this->_statusCodeMapping = ApiReturnCode::getStatusCodeMapping();
     }
 
@@ -167,6 +183,79 @@ class ApiComponent extends Component
     public function mapStatusCodes(array $codes)
     {
         $this->_statusCodeMapping = Hash::merge($this->getStatusCodeMapping(), $codes);
+    }
+
+    /**
+     * Handles authentication via the ApiToken header.
+     *
+     * @return void
+     */
+    public function apiTokenAuthentication()
+    {
+        if ($token = $this->request->header($this->config('header_name'))) {
+            if (!$this->Auth->user() || $this->Auth->user($this->config('field')) !== $token) {
+                $user = $this->_getEntityByToken($token);
+                if ($user) {
+                    $this->Auth->setUser($user->toArray());
+                } else {
+                    $this->Auth->logout();
+                }
+            }
+        }
+    }
+
+    /**
+     * Provides a table record for a token
+     *
+     * @param string $token token string
+     * @return EntityInterface
+     */
+    protected function _getEntityByToken($token)
+    {
+        return $this->_table->find()
+            ->where([
+                $this->config('field') => $token
+            ])
+            ->first();
+    }
+
+    /**
+     * Use the configured authentication adapters, and attempt to identify the user
+     * by credentials contained in $request.
+     *
+     * @return array|bool User record data, or false, if the user could not be identified.
+     */
+    public function identify()
+    {
+        if ($this->Auth->user()) {
+            $this->Auth->logout();
+        }
+        if ($user = $this->Auth->identify()) {
+            if (empty($user[$this->config('field')]) || $this->config('allow_parallel_sessions') === false) {
+                $userEntity = $this->_table->get($user['id']);
+                $userEntity->api_token = $this->generateApiToken();
+                $this->_table->save($userEntity);
+                $user[$this->config('field')] = $userEntity->get($this->config('field'));
+            }
+            $this->Auth->setUser($user);
+            return $user;
+        }
+        return false;
+    }
+
+    /**
+     * clears the api token
+     *
+     * @return void
+     */
+    public function logout()
+    {
+        if ($this->Auth->user()) {
+            $userEntity = $this->_table->get($this->Auth->user('id'));
+            $userEntity->api_token = null;
+            $this->_table->save($userEntity);
+            $this->Auth->logout();
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-namespace CakeApiBaselayerController\Error;
+namespace CakeApiBaselayer\Error;
 
 use Cake\Error\ErrorHandler;
 

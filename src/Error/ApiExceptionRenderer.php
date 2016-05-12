@@ -1,5 +1,5 @@
 <?php
-namespace CakeApiBaselayerController\Error;
+namespace CakeApiBaselayer\Error;
 
 class ApiExceptionRenderer extends \Cake\Error\ExceptionRenderer
 {
