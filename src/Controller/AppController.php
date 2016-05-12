@@ -32,6 +32,17 @@ class AppController extends BaseController
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function redirect($url, $status = null)
+    {
+        if (Router::normalize($this->Auth->config('loginAction')) == Router::normalize($url)) {
+            return $this->Api->response(ApiReturnCode::NOT_AUTHENTICATED);
+        }
+        return parent::redirect($url, $status);
+    }
+
+    /**
      * Version getter
      *
      * @return string
