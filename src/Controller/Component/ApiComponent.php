@@ -61,6 +61,13 @@ class ApiComponent extends Component
     protected $_table = null;
 
     /**
+     * Flag if response contains validation errors
+     *
+     * @var bool
+     */
+    protected $_hasErrors = false;
+
+    /**
      * Constructor hook method.
      *
      * Implement this method to avoid having to overwrite
@@ -114,9 +121,9 @@ class ApiComponent extends Component
     /**
      * Returns a standartized JSON response
      *
-     * @param int $httpStatusCode HTTP Status Code to send
      * @param string $returnCode A string code more specific to the result
      * @param array $data Data for the 'data' key
+     * @param int $httpStatusCode HTTP Status Code to send
      * @return Response
      */
     public function response($returnCode = ApiReturnCode::SUCCESS, array $data = [], $httpStatusCode = null)
@@ -130,6 +137,7 @@ class ApiComponent extends Component
 
         $responseData = [
             'code' => $returnCode,
+            'has_errors' => $this->hasErrors(),
             'data' => $data
         ];
         $response->type('json');
@@ -266,5 +274,42 @@ class ApiComponent extends Component
     public function generateApiToken()
     {
         return bin2hex(openssl_random_pseudo_bytes(16));
+    }
+
+    /**
+     * Gets and sets _hasErrors property.
+     * If the parameter is null, it gets the actual value of the property.
+     * If the parameter is not null, it sets the boolean representation of the given value into the
+     * property and returns the newly set value.
+     *
+     * @param  bool  $errors sets the property
+     * @return bool
+     */
+    public function hasErrors($errors = null)
+    {
+        if (!is_null($errors)) {
+            $this->_hasErrors = (bool)$errors;
+        }
+        return $this->_hasErrors;
+    }
+
+    /**
+     * Checks if a given entity or its children entities have errors.
+     * If so, sets _hasErrors and returns true, if not, returns false.
+     *
+     * @param Entity $entity entity which has possibly errors in it
+     * @return bool          has errors => true | has no errors => false
+     */
+    public function checkForErrors($entity) {
+        if (is_callable([$entity, 'errors']) && !empty($entity->errors())) {
+            return $this->hasErrors(true);
+        }
+        foreach ($entity->visibleProperties() as $propertyName) {
+            $property = $entity->get($propertyName);
+            if (is_callable([$property, 'errors']) && !empty($property->errors())) {
+                return $this->hasErrors(true);
+            }
+        }
+        return false;
     }
 }
