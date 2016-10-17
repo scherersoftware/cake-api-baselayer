@@ -1,13 +1,13 @@
 <?php
 namespace CakeApiBaselayer\Controller\Component;
 
+use CakeApiBaselayer\Lib\ApiReturnCode;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
-use CakeApiBaselayer\Lib\ApiReturnCode;
 
 /**
  * Api component
@@ -104,6 +104,7 @@ class ApiComponent extends Component
         if ($this->_response) {
             return $this->_response;
         }
+
         return $this->_registry->getController()->response;
     }
 
@@ -157,6 +158,7 @@ class ApiComponent extends Component
         if (!isset($this->_statusCodeMapping[$returnCode])) {
             throw new \Exception("Return code {$returnCode} is not mapped to any HTTP Status Code.");
         }
+
         return $this->_statusCodeMapping[$returnCode];
     }
 
@@ -246,8 +248,10 @@ class ApiComponent extends Component
                 $user[$this->config('field')] = $userEntity->get($this->config('field'));
             }
             $this->Auth->setUser($user);
+
             return $user;
         }
+
         return false;
     }
 
@@ -290,6 +294,7 @@ class ApiComponent extends Component
         if (!is_null($errors)) {
             $this->_hasErrors = (bool)$errors;
         }
+
         return $this->_hasErrors;
     }
 
@@ -300,7 +305,8 @@ class ApiComponent extends Component
      * @param Entity $entity entity which has possibly errors in it
      * @return bool          has errors => true | has no errors => false
      */
-    public function checkForErrors($entity) {
+    public function checkForErrors($entity)
+    {
         if (is_callable([$entity, 'errors']) && !empty($entity->errors())) {
             return $this->hasErrors(true);
         }
@@ -310,6 +316,7 @@ class ApiComponent extends Component
                 return $this->hasErrors(true);
             }
         }
+
         return false;
     }
 }

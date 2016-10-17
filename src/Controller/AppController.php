@@ -3,9 +3,9 @@
 namespace CakeApiBaselayer\Controller;
 
 use App\Controller\AppController as BaseController;
-use Cake\Routing\Router;
 use CakeApiBaselayer\Lib\ApiReturnCode;
 use Cake\Core\Configure;
+use Cake\Routing\Router;
 
 class AppController extends BaseController
 {

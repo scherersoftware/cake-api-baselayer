@@ -14,6 +14,7 @@ class ApiExceptionRenderer extends \Cake\Error\ExceptionRenderer
         $controller = parent::_getController();
         $controller->loadComponent('RequestHandler');
         $controller->RequestHandler->renderAs($controller, 'json');
+
         return $controller;
     }
 
