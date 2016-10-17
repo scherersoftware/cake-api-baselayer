@@ -3,9 +3,9 @@
 namespace CakeApiBaselayer\Controller;
 
 use App\Controller\AppController as BaseController;
-use Cake\Core\Configure;
 use Cake\Routing\Router;
 use CakeApiBaselayer\Lib\ApiReturnCode;
+use Cake\Core\Configure;
 
 class AppController extends BaseController
 {
@@ -30,28 +30,5 @@ class AppController extends BaseController
 
         $this->Api->setup();
         $this->Api->RequestHandler->renderAs($this->Api->_registry->getController(), 'json');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function redirect($url, $status = null)
-    {
-        if (Router::normalize($this->Auth->config('loginAction')) == Router::normalize($url)) {
-            return $this->Api->response(ApiReturnCode::NOT_AUTHENTICATED);
-        }
-        return parent::redirect($url, $status);
-    }
-
-    /**
-     * Version getter
-     *
-     * @return string
-     */
-    public function version()
-    {
-        $configId = str_replace('/', '.', $this->request->param('plugin'));
-        $versionInfo = Configure::read($configId . '.version_info');
-        return $this->Api->response(ApiReturnCode::SUCCESS, $versionInfo);
     }
 }
