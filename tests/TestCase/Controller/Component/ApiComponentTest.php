@@ -1,11 +1,11 @@
 <?php
 namespace CakeApiBaselayer\Test\TestCase\Controller\Component;
 
+use CakeApiBaselayer\Controller\Component\ApiComponent;
+use CakeApiBaselayer\Lib\ApiReturnCode;
 use Cake\Controller\ComponentRegistry;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
-use CakeApiBaselayer\Controller\Component\ApiComponent;
-use CakeApiBaselayer\Lib\ApiReturnCode;
 
 /**
  * Api\Controller\Component\ApiComponent Test Case
