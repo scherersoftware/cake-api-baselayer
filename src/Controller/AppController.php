@@ -27,9 +27,7 @@ class AppController extends BaseController
     public function beforeFilter(\Cake\Event\Event $event)
     {
         parent::beforeFilter($event);
-
         $this->Api->setup();
-        $this->Api->RequestHandler->renderAs($this->Api->_registry->getController(), 'json');
     }
 
     /**
@@ -40,7 +38,6 @@ class AppController extends BaseController
         if (Router::normalize($this->Auth->config('loginAction')) == Router::normalize($url)) {
             return $this->Api->response(ApiReturnCode::NOT_AUTHENTICATED);
         }
-        return parent::redirect($url, $status);
     }
 
     /**
