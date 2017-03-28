@@ -4,6 +4,7 @@ namespace CakeApiBaselayer\Controller;
 
 use App\Controller\AppController as BaseController;
 use Cake\Core\Configure;
+use Cake\Network\Response;
 use Cake\Routing\Router;
 use CakeApiBaselayer\Lib\ApiReturnCode;
 
@@ -35,7 +36,7 @@ class AppController extends BaseController
     /**
      * {@inheritDoc}
      */
-    public function redirect($url, $status = null)
+    public function redirect($url, $status = 302): ?Response
     {
         if (Router::normalize($this->Auth->config('loginAction')) == Router::normalize($url)) {
             return $this->Api->response(ApiReturnCode::NOT_AUTHENTICATED);
