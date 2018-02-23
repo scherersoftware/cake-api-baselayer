@@ -37,7 +37,7 @@ class AppController extends BaseController
      */
     public function redirect($url, $status = null)
     {
-        if (Router::normalize($this->Auth->config('loginAction')) == Router::normalize($url)) {
+        if (strpos(Router::normalize($url), Router::normalize($this->Auth->config('loginAction'))) === 0) {
             return $this->Api->response(ApiReturnCode::NOT_AUTHENTICATED);
         }
         return parent::redirect($url, $status);
