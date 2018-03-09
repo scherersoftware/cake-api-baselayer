@@ -90,8 +90,8 @@ class ApiComponent extends Component
     public function setup()
     {
         $this->RequestHandler->prefers('json');
-        // Force a JSON response regardless of extension
-        // $this->RequestHandler->renderAs($this->_registry->getController(), 'json');
+        $this->RequestHandler->renderAs($this->_registry->getController(), 'json');
+        $this->apiTokenAuthentication();
     }
 
     /**
@@ -142,6 +142,8 @@ class ApiComponent extends Component
         ];
         $response->type('json');
         $response->body(json_encode($responseData, $this->config('jsonEncodeOptions')));
+
+        $this->Auth->logout();
 
         return $response;
     }
