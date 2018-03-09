@@ -38,6 +38,8 @@ class AppController extends BaseController
         if (strpos(Router::normalize($url), Router::normalize($this->Auth->config('loginAction'))) === 0) {
             return $this->Api->response(ApiReturnCode::NOT_AUTHENTICATED);
         }
+
+        return parent::redirect($url, $status);     
     }
 
     /**
@@ -49,6 +51,7 @@ class AppController extends BaseController
     {
         $configId = str_replace('/', '.', $this->request->param('plugin'));
         $versionInfo = Configure::read($configId . '.version_info');
+
         return $this->Api->response(ApiReturnCode::SUCCESS, $versionInfo);
     }
 }
