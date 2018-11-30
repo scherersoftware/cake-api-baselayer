@@ -143,8 +143,6 @@ class ApiComponent extends Component
         $response->type('json');
         $response->body(json_encode($responseData, $this->config('jsonEncodeOptions')));
 
-        $this->Auth->logout();
-
         return $response;
     }
 
