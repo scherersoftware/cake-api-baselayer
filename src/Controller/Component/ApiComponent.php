@@ -2,8 +2,6 @@
 namespace CakeApiBaselayer\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
-use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
@@ -42,7 +40,7 @@ class ApiComponent extends Component
     /**
      * Holds the Response object
      *
-     * @var Response
+     * @var \Cake\Http\Response
      */
     protected $_response = null;
 
@@ -57,7 +55,7 @@ class ApiComponent extends Component
     /**
      * Table to be used
      *
-     * @var array
+     * @var \Cake\ORM\Table
      */
     protected $_table = null;
 
@@ -77,7 +75,7 @@ class ApiComponent extends Component
      * @param array $config The configuration settings provided to this component.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->_table = TableRegistry::getTableLocator()->get($this->getConfig('repository'));
         $this->_statusCodeMapping = ApiReturnCode::getStatusCodeMapping();
@@ -123,9 +121,9 @@ class ApiComponent extends Component
     /**
      * Returns a standardized JSON response
      *
-     * @param string $returnCode A string code more specific to the result
-     * @param array $data Data for the 'data' key
-     * @param int $httpStatusCode HTTP Status Code to send
+     * @param string $returnCode     A string code more specific to the result
+     * @param array  $data           Data for the 'data' key
+     * @param int    $httpStatusCode HTTP Status Code to send
      * @return \Cake\Http\Response
      */
     public function response($returnCode = ApiReturnCode::SUCCESS, array $data = [], $httpStatusCode = null): Response
@@ -177,8 +175,8 @@ class ApiComponent extends Component
     /**
      * Map a return code to a status code
      *
-     * @param string $returnCode Return Code
-     * @param int $httpStatusCode The HTTP Status code to use for the given return code
+     * @param string $returnCode     Return Code
+     * @param int    $httpStatusCode The HTTP Status code to use for the given return code
      * @return void
      */
     public function mapStatusCode(string $returnCode, int $httpStatusCode): void

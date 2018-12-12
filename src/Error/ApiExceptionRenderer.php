@@ -2,8 +2,9 @@
 namespace CakeApiBaselayer\Error;
 
 use Cake\Controller\Controller;
+use Cake\Error\ExceptionRenderer;
 
-class ApiExceptionRenderer extends \Cake\Error\ExceptionRenderer
+class ApiExceptionRenderer extends ExceptionRenderer
 {
 
     /**

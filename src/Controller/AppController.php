@@ -50,7 +50,7 @@ class AppController extends BaseController
      */
     public function version(): string
     {
-        $configId = str_replace('/', '.', $this->request->param('plugin'));
+        $configId = str_replace('/', '.', $this->request->getParam('plugin'));
         $versionInfo = Configure::read($configId . '.version_info');
 
         return $this->Api->response(ApiReturnCode::SUCCESS, $versionInfo);
