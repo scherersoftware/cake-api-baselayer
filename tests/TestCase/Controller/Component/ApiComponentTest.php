@@ -2,14 +2,16 @@
 namespace CakeApiBaselayer\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;
-use Cake\Network\Response;
+use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use CakeApiBaselayer\Controller\Component\ApiComponent;
 use CakeApiBaselayer\Lib\ApiReturnCode;
 
 /**
  * Api\Controller\Component\ApiComponent Test Case
- */
+ *
+ * @property \CakeApiBaselayer\Controller\Component\ApiComponent Api
+*/
 class ApiComponentTest extends TestCase
 {
 
@@ -65,10 +67,10 @@ class ApiComponentTest extends TestCase
         ];
         $response = $this->Api->response($code, $data, $httpStatus);
 
-        $this->assertEquals($response->type(), 'application/json');
-        $this->assertEquals($response->statusCode(), $httpStatus);
+        $this->assertEquals($response->getType(), 'application/json');
+        $this->assertEquals($response->getStatusCode(), $httpStatus);
 
-        $decoded = json_decode($response->body(), true);
+        $decoded = json_decode($response->getBody(), true);
         $this->assertEquals($decoded['data'], $data);
         $this->assertEquals($decoded['code'], $code);
     }

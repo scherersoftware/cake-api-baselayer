@@ -1,19 +1,22 @@
 <?php
 namespace CakeApiBaselayer\Error;
 
+use Cake\Controller\Controller;
+
 class ApiExceptionRenderer extends \Cake\Error\ExceptionRenderer
 {
 
     /**
      * overwriting get controller
      *
-     * @return Controller instance of controller
+     * @return \Cake\Controller\Controller instance of controller
      */
-    protected function _getController()
+    protected function _getController(): Controller
     {
         $controller = parent::_getController();
         $controller->loadComponent('RequestHandler');
         $controller->RequestHandler->renderAs($controller, 'json');
+
         return $controller;
     }
 
@@ -24,7 +27,7 @@ class ApiExceptionRenderer extends \Cake\Error\ExceptionRenderer
      * @param \Exception $exception Exception
      * @return string Error code value within range 400 to 506
      */
-    protected function _code(\Exception $exception)
+    protected function _code(\Exception $exception): string
     {
         return (string)parent::_code($exception);
     }
