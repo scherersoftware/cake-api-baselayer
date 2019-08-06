@@ -202,7 +202,7 @@ class ApiComponent extends Component
      */
     public function apiTokenAuthentication(): void
     {
-        if ($token = $this->getController()->getRequest()->getHeader($this->getConfig('header_name'))) {
+        if ($token = $this->getController()->getRequest()->getHeaderLine($this->getConfig('header_name'))) {
             if (!$this->Auth->user() || $this->Auth->user($this->getConfig('field')) !== $token) {
                 $user = $this->_getEntityByToken($token);
                 if ($user) {
