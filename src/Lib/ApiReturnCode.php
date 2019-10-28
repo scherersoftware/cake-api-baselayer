@@ -29,7 +29,7 @@ class ApiReturnCode
             self::FORBIDDEN => 403,
             self::NOT_FOUND => 404,
             self::VALIDATION_FAILED => 400,
-            self::INTERNAL_ERROR => 500
+            self::INTERNAL_ERROR => 500,
         ];
     }
 }

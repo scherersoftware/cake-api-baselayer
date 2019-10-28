@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 namespace CakeApiBaselayer\Test\TestCase\Controller\Component;
 
 use Cake\Controller\ComponentRegistry;

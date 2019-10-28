@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 namespace CakeApiBaselayer\Error;
 
 use Cake\Controller\Controller;
@@ -26,10 +27,10 @@ class ApiExceptionRenderer extends ExceptionRenderer
      * // FIXME make this configurable via an option
      *
      * @param \Exception $exception Exception
-     * @return string Error code value within range 400 to 506
+     * @return int Error code value within range 400 to 506
      */
-    protected function _code(\Exception $exception): string
+    protected function _code(\Exception $exception): int
     {
-        return (string)parent::_code($exception);
+        return (int)parent::_code($exception);
     }
 }

@@ -1,15 +1,17 @@
 <?php
+declare(strict_types = 1);
 namespace CakeApiBaselayer\Controller\Component;
 
+use CakeApiBaselayer\Lib\ApiReturnCode;
 use Cake\Controller\Component;
 use Cake\Datasource\EntityInterface;
 use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
-use CakeApiBaselayer\Lib\ApiReturnCode;
 
 /**
- * Api component
+ * @property \Cake\Controller\Component\AuthComponent $Auth
+ * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  */
 class ApiComponent extends Component
 {
@@ -21,7 +23,7 @@ class ApiComponent extends Component
      */
     public $components = [
         'RequestHandler',
-        'Auth'
+        'Auth',
     ];
 
     /**
@@ -50,7 +52,6 @@ class ApiComponent extends Component
      * @var array
      */
     protected $_statusCodeMapping = [];
-
 
     /**
      * Table to be used
@@ -100,7 +101,7 @@ class ApiComponent extends Component
      */
     public function getResponse(): Response
     {
-        if ($this->_response) {
+        if (!empty($this->_response)) {
             return $this->_response;
         }
 
@@ -126,7 +127,7 @@ class ApiComponent extends Component
      * @param int    $httpStatusCode HTTP Status Code to send
      * @return \Cake\Http\Response
      */
-    public function response($returnCode = ApiReturnCode::SUCCESS, array $data = [], $httpStatusCode = null): Response
+    public function response(string $returnCode = ApiReturnCode::SUCCESS, array $data = [], int $httpStatusCode = null): Response
     {
         if (!$httpStatusCode) {
             $httpStatusCode = $this->getHttpStatusForReturnCode($returnCode);
@@ -138,7 +139,7 @@ class ApiComponent extends Component
         $responseData = [
             'code' => $returnCode,
             'has_errors' => $this->hasErrors(),
-            'data' => $data
+            'data' => $data,
         ];
         $response = $response
             ->withType('json')
@@ -220,11 +221,11 @@ class ApiComponent extends Component
      * @param string $token token string
      * @return \Cake\Datasource\EntityInterface
      */
-    protected function _getEntityByToken($token): EntityInterface
+    protected function _getEntityByToken(string $token): EntityInterface
     {
         return $this->_table->find()
             ->where([
-                $this->getConfig('field') => $token
+                $this->getConfig('field') => $token,
             ])
             ->first();
     }
@@ -310,7 +311,7 @@ class ApiComponent extends Component
      * @param \Cake\Datasource\EntityInterface $entity entity which has possibly errors in it
      * @return bool          has errors => true | has no errors => false
      */
-    public function checkForErrors(EntityInterface $entity) : bool
+    public function checkForErrors(EntityInterface $entity): bool
     {
         if (is_callable([$entity, 'errors']) && !empty($entity->getErrors())) {
             return $this->hasErrors(true);
