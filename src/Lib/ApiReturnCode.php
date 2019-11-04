@@ -4,6 +4,7 @@ namespace CakeApiBaselayer\Lib;
 class ApiReturnCode
 {
     const SUCCESS = 'success';
+    const ENTITY_CREATED = 'entity_created';
     const NOT_AUTHENTICATED = 'not_authenticated';
     const INVALID_PARAMS = 'invalid_params';
     const INVALID_CREDENTIALS = 'invalid_credentials';
@@ -22,6 +23,7 @@ class ApiReturnCode
     {
         return [
             self::SUCCESS => 200,
+            self::ENTITY_CREATED => 201,
             self::NOT_AUTHENTICATED => 401,
             self::INVALID_CREDENTIALS => 401,
             self::INVALID_PARAMS => 400,
