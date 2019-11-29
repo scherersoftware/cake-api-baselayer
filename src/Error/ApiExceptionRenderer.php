@@ -4,10 +4,10 @@ namespace CakeApiBaselayer\Error;
 
 use Cake\Controller\Controller;
 use Cake\Error\ExceptionRenderer;
+use Throwable;
 
 class ApiExceptionRenderer extends ExceptionRenderer
 {
-
     /**
      * overwriting get controller
      *
@@ -29,7 +29,7 @@ class ApiExceptionRenderer extends ExceptionRenderer
      * @param \Exception $exception Exception
      * @return int Error code value within range 400 to 506
      */
-    protected function _code(\Exception $exception): int
+    protected function _code(Throwable $exception): int
     {
         return (int)parent::_code($exception);
     }

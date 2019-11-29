@@ -2,8 +2,9 @@
 declare(strict_types = 1);
 namespace CakeApiBaselayer\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Controller;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use CakeApiBaselayer\Controller\Component\ApiComponent;
 use CakeApiBaselayer\Lib\ApiReturnCode;
@@ -17,15 +18,26 @@ class ApiComponentTest extends TestCase
 {
 
     /**
+     * fixtures property
+     *
+     * @var array
+     */
+    protected $fixtures = ['plugin.CakeApiBaselayer.Users'];
+
+    /**
      * setUp method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $registry = new ComponentRegistry();
-        $this->Api = new ApiComponent($registry);
+
+        $request = new ServerRequest([]);
+        $response = new Response();
+
+        $this->Controller = new Controller($request, $response);
+        $this->Api = new ApiComponent($this->Controller->components());
     }
 
     /**
@@ -33,8 +45,9 @@ class ApiComponentTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
+        unset($this->Controller);
         unset($this->Api);
 
         parent::tearDown();
@@ -71,7 +84,7 @@ class ApiComponentTest extends TestCase
         $this->assertEquals($response->getType(), 'application/json');
         $this->assertEquals($response->getStatusCode(), $httpStatus);
 
-        $decoded = json_decode($response->getBody(), true);
+        $decoded = json_decode((string)$response->getBody(), true);
         $this->assertEquals($decoded['data'], $data);
         $this->assertEquals($decoded['code'], $code);
     }
@@ -84,12 +97,12 @@ class ApiComponentTest extends TestCase
     public function testStatusCodeMapping()
     {
         $this->assertEquals($this->Api->getHttpStatusForReturnCode(ApiReturnCode::SUCCESS), 200);
-        $this->assertEquals($this->Api->getHttpStatusForReturnCode(ApiReturnCode::NOT_AUTHENTICATED), 403);
+        $this->assertEquals($this->Api->getHttpStatusForReturnCode(ApiReturnCode::NOT_AUTHENTICATED), 401);
 
         $this->Api->mapStatusCode('foobar', 123);
         $this->assertEquals($this->Api->getHttpStatusForReturnCode('foobar'), 123);
 
-        $this->assertEquals($this->Api->getHttpStatusForReturnCode(ApiReturnCode::NOT_AUTHENTICATED), 403);
+        $this->assertEquals($this->Api->getHttpStatusForReturnCode(ApiReturnCode::NOT_AUTHENTICATED), 401);
 
         $this->Api->mapStatusCodes([
             'code1' => 111,
@@ -98,6 +111,6 @@ class ApiComponentTest extends TestCase
         $this->assertEquals($this->Api->getHttpStatusForReturnCode('code1'), 111);
         $this->assertEquals($this->Api->getHttpStatusForReturnCode('code2'), 222);
 
-        $this->assertEquals($this->Api->getHttpStatusForReturnCode(ApiReturnCode::NOT_AUTHENTICATED), 403);
+        $this->assertEquals($this->Api->getHttpStatusForReturnCode(ApiReturnCode::NOT_AUTHENTICATED), 401);
     }
 }

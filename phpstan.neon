@@ -1,3 +1,7 @@
 parameters:
     autoload_files:
         - ../vendor/cakephp/cakephp/src/basics.php
+    ignoreErrors:
+        - '#Access to an undefined property Cake\\Datasource\\EntityInterface::\$api_token#'
+    excludes_analyse:
+        - src/Controller/AppController.php

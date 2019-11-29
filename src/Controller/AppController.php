@@ -3,10 +3,10 @@ declare(strict_types = 1);
 namespace CakeApiBaselayer\Controller;
 
 use App\Controller\AppController as BaseController;
-use CakeApiBaselayer\Lib\ApiReturnCode;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Routing\Router;
+use CakeApiBaselayer\Lib\ApiReturnCode;
 
 class AppController extends BaseController
 {

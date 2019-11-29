@@ -1,18 +1,19 @@
 <?php
+declare(strict_types = 1);
 namespace CakeApiBaselayer\Lib;
 
 class ApiReturnCode
 {
-    const SUCCESS = 'success';
-    const ENTITY_CREATED = 'entity_created';
-    const NOT_AUTHENTICATED = 'not_authenticated';
-    const INVALID_PARAMS = 'invalid_params';
-    const INVALID_CREDENTIALS = 'invalid_credentials';
-    const NOT_AUTHORIZED = 'not_authorized';
-    const FORBIDDEN = 'forbidden';
-    const VALIDATION_FAILED = 'validation_failed';
-    const NOT_FOUND = 'not_found';
-    const INTERNAL_ERROR = 'internal_error';
+    public const SUCCESS = 'success';
+    public const ENTITY_CREATED = 'entity_created';
+    public const NOT_AUTHENTICATED = 'not_authenticated';
+    public const INVALID_PARAMS = 'invalid_params';
+    public const INVALID_CREDENTIALS = 'invalid_credentials';
+    public const NOT_AUTHORIZED = 'not_authorized';
+    public const FORBIDDEN = 'forbidden';
+    public const VALIDATION_FAILED = 'validation_failed';
+    public const NOT_FOUND = 'not_found';
+    public const INTERNAL_ERROR = 'internal_error';
 
     /**
      * Maps return codes to HTTP Status Codes

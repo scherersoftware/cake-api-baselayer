@@ -11,7 +11,7 @@ class Plugin extends BasePlugin
     /**
      * {@inheritdoc}
      */
-    public function bootstrap(PluginApplicationInterface $app)
+    public function bootstrap(PluginApplicationInterface $app): void
     {
         if (substr(env('REQUEST_URI'), 0, 5) === '/api/') {
             Configure::write('Error.exceptionRenderer', '\CakeApiBaselayer\Error\ApiExceptionRenderer');
