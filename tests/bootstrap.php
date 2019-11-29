@@ -14,14 +14,4 @@ $_SERVER['PHP_SELF'] = '/';
 
 Configure::write('App.namespace', 'CakeApiBaselayer');
 
-ConnectionManager::setConfig('test', [
-    'className' => 'Cake\Database\Connection',
-    'driver' => 'Cake\Database\Driver\Mysql',
-    'persistent' => false,
-    'host' => 'localhost',
-    'username' => 'root',
-    'password' => '',
-    'database' => 'cake_api_baselayer_test',
-    'encoding' => 'utf8',
-    'timezone' => 'UTC'
-]);
+ConnectionManager::setConfig('test', ['url' => getenv('DB_DSN')]);
