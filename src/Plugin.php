@@ -13,7 +13,7 @@ class Plugin extends BasePlugin
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {
-        if (substr(env('REQUEST_URI'), 0, 5) === '/api/') {
+        if (env('REQUEST_URI') && substr(env('REQUEST_URI'), 0, 5) === '/api/') {
             Configure::write('Error.exceptionRenderer', '\CakeApiBaselayer\Error\ApiExceptionRenderer');
         }
     }
