@@ -18,7 +18,7 @@ class ApiReturnCode
      *
      * @return array
      */
-    public static function getStatusCodeMapping()
+    public static function getStatusCodeMapping(): array
     {
         return [
             self::SUCCESS => 200,

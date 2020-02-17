@@ -4,6 +4,7 @@ namespace CakeApiBaselayer\Controller;
 
 use App\Controller\AppController as BaseController;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Routing\Router;
 use CakeApiBaselayer\Lib\ApiReturnCode;
 
@@ -24,12 +25,10 @@ class AppController extends BaseController
     /**
      * {@inheritDoc}
      */
-    public function beforeFilter(\Cake\Event\Event $event)
+    public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-
         $this->Api->setup();
-        $this->Api->RequestHandler->renderAs($this->Api->_registry->getController(), 'json');
     }
 
     /**
@@ -37,10 +36,11 @@ class AppController extends BaseController
      */
     public function redirect($url, $status = null)
     {
-        if (Router::normalize($this->Auth->config('loginAction')) == Router::normalize($url)) {
+        if (strpos(Router::normalize($url), Router::normalize($this->Auth->getConfig('loginAction'))) === 0) {
             return $this->Api->response(ApiReturnCode::NOT_AUTHENTICATED);
         }
-        return parent::redirect($url, $status);
+
+        return parent::redirect($url, $status);     
     }
 
     /**
@@ -48,10 +48,11 @@ class AppController extends BaseController
      *
      * @return string
      */
-    public function version()
+    public function version(): string
     {
-        $configId = str_replace('/', '.', $this->request->param('plugin'));
+        $configId = str_replace('/', '.', $this->request->getParam('plugin'));
         $versionInfo = Configure::read($configId . '.version_info');
+
         return $this->Api->response(ApiReturnCode::SUCCESS, $versionInfo);
     }
 }
