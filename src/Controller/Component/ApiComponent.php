@@ -119,31 +119,32 @@ class ApiComponent extends Component
     }
 
     /**
-     * Returns a standartized JSON response
+     * Returns a standardized JSON response
      *
-     * @param string $returnCode A string code more specific to the result
-     * @param array $data Data for the 'data' key
-     * @param int $httpStatusCode HTTP Status Code to send
-     * @return Response
+     * @param string $returnCode     A string code more specific to the result
+     * @param array  $data           Data for the 'data' key
+     * @param int    $httpStatusCode HTTP Status Code to send
+     * @return \Cake\Http\Response
      */
-    public function response($returnCode = ApiReturnCode::SUCCESS, array $data = [], $httpStatusCode = null)
+    public function response($returnCode = ApiReturnCode::SUCCESS, array $data = [], $httpStatusCode = null): Response
     {
         if (!$httpStatusCode) {
             $httpStatusCode = $this->getHttpStatusForReturnCode($returnCode);
         }
 
-        $response = $this->getResponse();
-        $response->statusCode($httpStatusCode);
+        $response = $this->getResponse()
+            ->withStatus($httpStatusCode);
 
         $responseData = [
             'code' => $returnCode,
             'has_errors' => $this->hasErrors(),
             'data' => $data
         ];
-        $response->type('json');
-        $response->body(json_encode($responseData, $this->config('jsonEncodeOptions')));
+        $response = $response
+            ->withType('json')
+            ->withStringBody(json_encode($responseData, $this->getConfig('jsonEncodeOptions')));
 
-        return $response;
+        return $response->withLength($response->getBody()->getSize());
     }
 
     /**
