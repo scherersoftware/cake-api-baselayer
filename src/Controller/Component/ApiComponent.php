@@ -132,8 +132,8 @@ class ApiComponent extends Component
             $httpStatusCode = $this->getHttpStatusForReturnCode($returnCode);
         }
 
-        $response = $this->getResponse();
-        $response = $response->withStatus($httpStatusCode);
+        $response = $this->getResponse()
+            ->withStatus($httpStatusCode);
 
         $responseData = [
             'code' => $returnCode,
@@ -144,7 +144,7 @@ class ApiComponent extends Component
             ->withType('json')
             ->withStringBody(json_encode($responseData, $this->getConfig('jsonEncodeOptions')));
 
-        return $response;
+        return $response->withLength($response->getBody()->getSize());
     }
 
     /**
