@@ -1,8 +1,17 @@
 <?php
 /**
- * Test suite bootstrap for CakeApiBaselayer.
+ * Test runner bootstrap.
+ *
+ * Add additional configuration/setup your application needs when running
+ * unit tests in this file.
  */
-// Customize this to be a relative path for embedded plugins.
-// For standalone plugins, this should point at a CakePHP installation.
+use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
 
-require strstr(getcwd(), 'vendor/', true) . 'config/bootstrap.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$_SERVER['PHP_SELF'] = '/';
+
+Configure::write('App.namespace', 'CakeApiBaselayer');
+
+ConnectionManager::setConfig('test', ['url' => getenv('DB_DSN')]);

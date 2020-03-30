@@ -1,10 +1,11 @@
 <?php
-
+declare(strict_types = 1);
 namespace CakeApiBaselayer\Controller;
 
 use App\Controller\AppController as BaseController;
 use Cake\Core\Configure;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\Routing\Router;
 use CakeApiBaselayer\Lib\ApiReturnCode;
 
@@ -15,7 +16,7 @@ class AppController extends BaseController
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
@@ -25,7 +26,7 @@ class AppController extends BaseController
     /**
      * {@inheritDoc}
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
         $this->Api->setup();
@@ -34,13 +35,13 @@ class AppController extends BaseController
     /**
      * {@inheritDoc}
      */
-    public function redirect($url, $status = null)
+    public function redirect($url, int $status = 302): ?Response
     {
         if (strpos(Router::normalize($url), Router::normalize($this->Auth->getConfig('loginAction'))) === 0) {
             return $this->Api->response(ApiReturnCode::NOT_AUTHENTICATED);
         }
 
-        return parent::redirect($url, $status);     
+        return parent::redirect($url, $status);
     }
 
     /**

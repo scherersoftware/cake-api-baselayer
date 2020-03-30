@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 namespace CakeApiBaselayer\Controller\Component;
 
 use Cake\Controller\Component;
@@ -7,13 +8,14 @@ use Cake\Http\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use CakeApiBaselayer\Lib\ApiReturnCode;
+use Exception;
 
 /**
- * Api component
+ * @property \Cake\Controller\Component\AuthComponent $Auth
+ * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  */
 class ApiComponent extends Component
 {
-
     /**
      * Used Components
      *
@@ -21,7 +23,7 @@ class ApiComponent extends Component
      */
     public $components = [
         'RequestHandler',
-        'Auth'
+        'Auth',
     ];
 
     /**
@@ -50,7 +52,6 @@ class ApiComponent extends Component
      * @var array
      */
     protected $_statusCodeMapping = [];
-
 
     /**
      * Table to be used
@@ -100,7 +101,7 @@ class ApiComponent extends Component
      */
     public function getResponse(): Response
     {
-        if ($this->_response) {
+        if (!empty($this->_response)) {
             return $this->_response;
         }
 
@@ -126,8 +127,11 @@ class ApiComponent extends Component
      * @param int    $httpStatusCode HTTP Status Code to send
      * @return \Cake\Http\Response
      */
-    public function response($returnCode = ApiReturnCode::SUCCESS, array $data = [], $httpStatusCode = null): Response
-    {
+    public function response(
+        string $returnCode = ApiReturnCode::SUCCESS,
+        array $data = [],
+        int $httpStatusCode = null
+    ): Response {
         if (!$httpStatusCode) {
             $httpStatusCode = $this->getHttpStatusForReturnCode($returnCode);
         }
@@ -138,7 +142,7 @@ class ApiComponent extends Component
         $responseData = [
             'code' => $returnCode,
             'has_errors' => $this->hasErrors(),
-            'data' => $data
+            'data' => $data,
         ];
         $response = $response
             ->withType('json')
@@ -156,7 +160,7 @@ class ApiComponent extends Component
     public function getHttpStatusForReturnCode(string $returnCode): int
     {
         if (!isset($this->_statusCodeMapping[$returnCode])) {
-            throw new \Exception("Return code {$returnCode} is not mapped to any HTTP Status Code.");
+            throw new Exception("Return code {$returnCode} is not mapped to any HTTP Status Code.");
         }
 
         return $this->_statusCodeMapping[$returnCode];
@@ -202,10 +206,11 @@ class ApiComponent extends Component
      */
     public function apiTokenAuthentication(): void
     {
-        if ($token = $this->getController()->getRequest()->getHeaderLine($this->getConfig('header_name'))) {
+        $token = $this->getController()->getRequest()->getHeaderLine($this->getConfig('header_name'));
+        if (!empty($token)) {
             if (!$this->Auth->user() || $this->Auth->user($this->getConfig('field')) !== $token) {
                 $user = $this->_getEntityByToken($token);
-                if ($user) {
+                if (!empty($user)) {
                     $this->Auth->setUser($user->toArray());
                 } else {
                     $this->Auth->logout();
@@ -220,11 +225,11 @@ class ApiComponent extends Component
      * @param string $token token string
      * @return \Cake\Datasource\EntityInterface
      */
-    protected function _getEntityByToken($token): EntityInterface
+    protected function _getEntityByToken(string $token): EntityInterface
     {
         return $this->_table->find()
             ->where([
-                $this->getConfig('field') => $token
+                $this->getConfig('field') => $token,
             ])
             ->first();
     }
@@ -240,9 +245,11 @@ class ApiComponent extends Component
         if ($this->Auth->user()) {
             $this->Auth->logout();
         }
-        if ($user = $this->Auth->identify()) {
+        $user = $this->Auth->identify();
+        if (is_array($user)) {
             if (empty($user[$this->getConfig('field')]) || $this->getConfig('allow_parallel_sessions') === false) {
                 $userEntity = $this->_table->get($user['id']);
+
                 $userEntity->api_token = $this->generateApiToken();
                 $this->_table->save($userEntity);
                 $user[$this->getConfig('field')] = $userEntity->get($this->getConfig('field'));
@@ -279,7 +286,7 @@ class ApiComponent extends Component
     {
         $pseudoBytes = openssl_random_pseudo_bytes(16);
         if ($pseudoBytes === false) {
-            throw new \Exception('Could not generate API token');
+            throw new Exception('Could not generate API token');
         }
 
         return bin2hex($pseudoBytes);
@@ -310,12 +317,12 @@ class ApiComponent extends Component
      * @param \Cake\Datasource\EntityInterface $entity entity which has possibly errors in it
      * @return bool          has errors => true | has no errors => false
      */
-    public function checkForErrors(EntityInterface $entity) : bool
+    public function checkForErrors(EntityInterface $entity): bool
     {
         if (is_callable([$entity, 'errors']) && !empty($entity->getErrors())) {
             return $this->hasErrors(true);
         }
-        foreach ($entity->visibleProperties() as $propertyName) {
+        foreach ($entity->getVisible() as $propertyName) {
             $property = $entity->get($propertyName);
             if (is_callable([$property, 'getErrors']) && !empty($property->getErrors())) {
                 return $this->hasErrors(true);
