@@ -24,7 +24,7 @@ class AppController extends BaseController
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function beforeFilter(EventInterface $event)
     {
@@ -33,7 +33,7 @@ class AppController extends BaseController
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function redirect($url, int $status = 302): ?Response
     {
